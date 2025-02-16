@@ -1,5 +1,5 @@
 ### **Workflow Configuration**
-name: Deployment
+name: deployment
 on:
   push:
     branches:
