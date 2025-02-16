@@ -1,0 +1,46 @@
+### **Workflow Configuration**
+name: Deployment
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: write # Allows pushing tags to the repository
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Deploy to Demo from Develop Branch
+      - name: Deploy to Demo
+        if: |
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/develop'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.ftp_server }}
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          server-dir: /demo.robinslaw.co.tz/
+
+      # Deploy to Main Website
+      - name: Deploy to Main
+        if: |
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/main'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.ftp_server }}
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          server-dir: /robinslaw.co.tz/
+
